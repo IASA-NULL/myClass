@@ -12,27 +12,27 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css">
     <style>
 
-        body {
+        body, html {
             -webkit-print-color-adjust: exact !important;
+            width: 100%;
+            height: 100%;
         }
 
         #chooser, #viewer {
             width: 100%;
             height: 100%;
-            position: fixed;
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow-y: scroll;
         }
 
         #chooser > div, #viewer > div {
             width: 900px;
-            margin: 0;
+            margin: auto;
             background: white;
             box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
             border-radius: 50px;
             padding: 30px;
+            height: fit-content;
         }
 
         .input-field input[type=text]:focus + label {
@@ -202,7 +202,7 @@
     </script>
 </head>
 <body>
-<div id="chooser">
+<div id="chooser" style="display:inline-flex;">
     <div>
         <h1 class="bold">인과영 시간표 뷰어</h1>
         <h4 class="light">학번을 입력하세요.</h4>
