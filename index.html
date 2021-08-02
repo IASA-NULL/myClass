@@ -176,6 +176,10 @@
                     <th>시간</th>`
             for (let i = 0; i < mag; i++) document.getElementById('stableh').innerHTML += `<th>${i + 1}</th>`
 
+            for (let i of data.user) {
+                if (stuid[0] === i.id[0] && stuid !== i.id && !gg[i.id]) gg[i.id] = []
+            }
+
             let gginfo = []
             for (let i in gg) {
                 let thtml = '', ti = 0
