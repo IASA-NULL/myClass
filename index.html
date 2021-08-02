@@ -170,7 +170,7 @@
             }
             let mag = 0
             for (let i in gg) {
-                if (i !== document.getElementById("stuid").value) mag = Math.max(mag, gg[i].length)
+                if (i !== document.getElementById("stuid").value && (!search || _.find(data.user, {id: i}).name.includes(search))) mag = Math.max(mag, gg[i].length)
             }
             document.getElementById('stableh').innerHTML = `<th>이름</th>
                     <th>시간</th>`
