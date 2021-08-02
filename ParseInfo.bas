@@ -101,7 +101,7 @@ Public Function parseMatrix(id)
     Set parseMatrix = New Collection
     
     Dim sheet As Worksheet
-    Set sheet = Worksheets("강의안내자료")
+    Set sheet = Worksheets("안내자료")
     sheet.Activate
     
     For dayI = 0 To day - 1
@@ -115,17 +115,17 @@ Public Function parseMatrix(id)
             If Cells(beginY + 5 * dayI + i, beginX + 3 * classI).MergeCells Then
                 GoTo Continue
             End If
-            
+            cn = Trim(Cells(beginY + 5 * dayI + i, beginX + 3 * classI + 1).value)
             Set oneClassDict = CreateObject("Scripting.Dictionary")
             oneClassDict.Add "id", Cells(beginY + 5 * dayI + i, beginX + 3 * classI).value
-            oneClassDict.Add "className", Cells(beginY + 5 * dayI + i, beginX + 3 * classI + 1).value
+            oneClassDict.Add "className", cn
             oneClassDict.Add "place", Cells(beginY + 5 * dayI + i, beginX + 3 * classI + 2).value
             oneClassDict.Add "day", dayI
             oneClassDict.Add "time", classI
             parseMatrix.Add oneClassDict
             
-            If ExistsInCollection(className, Cells(beginY + 5 * dayI + i, beginX + 3 * classI + 1).value) = False Then
-                className.Add Cells(beginY + 5 * dayI + i, beginX + 3 * classI + 1).value
+            If ExistsInCollection(className, cn) = False Then
+                className.Add cn
             End If
             
 Continue:
@@ -139,6 +139,9 @@ Public Function getFullName(ByVal shortName As String)
     sName = Replace(sName, vbLf, Chr(19))
     sName = Replace(sName, vbCrLf, Chr(19))
     sName = Split(sName, Chr(19))(0)
+    sName = Split(sName, "신청")(0)
+    sName = Split(sName, "분반")(0)
+    sName = Trim(sName)
     For Each i In className
         If containString(i, sName) Then
             getFullName = i
