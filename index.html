@@ -204,10 +204,6 @@
 
         function view() {
             stuid = document.getElementById('stuid').value
-            if (data) {
-                draw()
-                return
-            }
             fetch(stuid[0] + ".json")
                 .then(response => response.json())
                 .then(json => {
