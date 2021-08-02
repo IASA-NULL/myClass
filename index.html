@@ -89,69 +89,65 @@
         let stuid, data
         const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
 
-        function view() {
-            stuid = document.getElementById('stuid').value
-            fetch(stuid[0] + ".json")
-                .then(response => response.json())
-                .then(json => {
-                    data = json
-                    let user = _.find(data.user, {id: document.getElementById("stuid").value})
-                    if (!user) {
-                        M.toast({html: '학번이 올바르지 않아요.'})
-                        document.getElementById("stuid").value = ""
-                        return
+        function draw() {
+            let search = document.getElementById('gf').value
+            let user = _.find(data.user, {id: document.getElementById("stuid").value})
+            if (!user) {
+                M.toast({html: '학번이 올바르지 않아요.'})
+                document.getElementById("stuid").value = ""
+                return
+            }
+            document.getElementById('chooser').style.display = 'none'
+            document.getElementById('viewer').style.display = 'flex'
+            document.getElementById('name').innerText = user.name
+            let totalClass = 0, classList = [[], [], [], [], []], gg = {}, colorSet = {}, realClass = 0
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : ""])
+            }
+            let cn = 0
+            if (stuid[0] === '2') {
+                classList[0][7] = '창체'
+                classList[4][5] = '창체'
+                classList[4][6] = '창체'
+                classList[4][7] = '창체'
+                classList[2][5] = 'SA'
+                classList[2][6] = 'SA'
+                classList[2][7] = 'SA'
+                classList[2][8] = 'SA'
+                if (document.getElementById('color').checked) colorSet['창체'] = colors[0]
+                ++cn
+            }
+            if (stuid[0] === '3') {
+                classList[2][5] = 'SA'
+                classList[2][6] = 'SA'
+            }
+            if (document.getElementById('color').checked) colorSet['SA'] = colors[cn]
+            ++cn
+            for (let i of user.data) {
+                let nowClass = _.filter(data.class, i).length
+                totalClass += nowClass
+                realClass += nowClass
+                if (i.className.includes('AP')) realClass -= 1
+                _.filter(data.class, i).forEach((cl) => {
+                    if (document.getElementById('color').checked) {
+                        colorSet[cl.className] = colors[cn]
                     }
-                    document.getElementById('chooser').style.display = 'none'
-                    document.getElementById('viewer').style.display = 'flex'
-                    document.getElementById('name').innerText = user.name
-                    let totalClass = 0, classList = [[], [], [], [], []], gg = {}, colorSet = {}, realClass = 0
-                    for (let i = 0; i < 5; i++) {
-                        for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : ""])
-                    }
-                    let cn = 0
-                    if (stuid[0] === '2') {
-                        classList[0][7] = '창체'
-                        classList[4][5] = '창체'
-                        classList[4][6] = '창체'
-                        classList[4][7] = '창체'
-                        classList[2][5] = 'SA'
-                        classList[2][6] = 'SA'
-                        classList[2][7] = 'SA'
-                        classList[2][8] = 'SA'
-                        if (document.getElementById('color').checked) colorSet['창체'] = colors[0]
-                        ++cn
-                    }
-                    if (stuid[0] === '3') {
-                        classList[2][5] = 'SA'
-                        classList[2][6] = 'SA'
-                    }
-                    if (document.getElementById('color').checked) colorSet['SA'] = colors[cn]
-                    ++cn
-                    for (let i of user.data) {
-                        let nowClass = _.filter(data.class, i).length
-                        totalClass += nowClass
-                        realClass += nowClass
-                        if (i.className.includes('AP')) realClass -= 1
-                        _.filter(data.class, i).forEach((cl) => {
-                            if (document.getElementById('color').checked) {
-                                colorSet[cl.className] = colors[cn]
-                            }
-                            classList[parseInt(cl.day)][parseInt(cl.time)] = cl.className
-                        })
+                    classList[parseInt(cl.day)][parseInt(cl.time)] = cl.className
+                })
 
-                        for (let u of data.user) {
-                            if (_.find(u.data, i)) {
-                                if (!gg[u.id]) gg[u.id] = []
-                                gg[u.id].push({name: i.className, time: nowClass})
-                            }
-                        }
-
-                        ++cn;
+                for (let u of data.user) {
+                    if (_.find(u.data, i)) {
+                        if (!gg[u.id]) gg[u.id] = []
+                        gg[u.id].push({name: i.className, time: nowClass})
                     }
-                    document.getElementById('table').innerHTML = ''
-                    document.getElementById('stable').innerHTML = ''
-                    for (let i = 1; i <= 9; i++) {
-                        document.getElementById('table').innerHTML += `<tr>
+                }
+
+                ++cn;
+            }
+            document.getElementById('table').innerHTML = ''
+            document.getElementById('stable').innerHTML = ''
+            for (let i = 1; i <= 9; i++) {
+                document.getElementById('table').innerHTML += `<tr>
                 <td>${i}교시</td>
                 <td class="${colorSet[classList[0][i - 1]]} lighten-3">${classList[0][i - 1]}</td>
                 <td class="${colorSet[classList[1][i - 1]]} lighten-3">${classList[1][i - 1]}</td>
@@ -159,39 +155,52 @@
                 <td class="${colorSet[classList[3][i - 1]]} lighten-3">${classList[3][i - 1]}</td>
                 <td class="${colorSet[classList[4][i - 1]]} lighten-3">${classList[4][i - 1]}</td>
             </tr>`
-                    }
-                    let mag = 0
-                    for (let i in gg) {
-                        if (i !== document.getElementById("stuid").value) mag = Math.max(mag, gg[i].length)
-                    }
-                    document.getElementById('stableh').innerHTML = `<th>이름</th>
+            }
+            let mag = 0
+            for (let i in gg) {
+                if (i !== document.getElementById("stuid").value) mag = Math.max(mag, gg[i].length)
+            }
+            document.getElementById('stableh').innerHTML = `<th>이름</th>
                     <th>시간</th>`
-                    for (let i = 0; i < mag; i++) document.getElementById('stableh').innerHTML += `<th>${i + 1}</th>`
+            for (let i = 0; i < mag; i++) document.getElementById('stableh').innerHTML += `<th>${i + 1}</th>`
 
-                    let gginfo = []
-                    for (let i in gg) {
-                        let thtml = '', ti = 0
-                        for (let j of gg[i]) {
-                            thtml += `<td class="${colorSet[j.name]} lighten-3">${j.name}</td>`
-                            ti += j.time
-                        }
-                        for (let j = 0; j < mag - gg[i].length; j++) thtml += '<td></td>'
-                        if (i !== document.getElementById("stuid").value) gginfo.push({
-                            name: _.find(data.user, {id: i}).name,
-                            html: thtml,
-                            time: ti
-                        })
-                    }
-                    gginfo = _.orderBy(gginfo, ['time'], ['asc']).reverse();
-                    for (let i of gginfo) {
-                        document.getElementById('stable').innerHTML += `<tr>
+            let gginfo = []
+            for (let i in gg) {
+                let thtml = '', ti = 0
+                for (let j of gg[i]) {
+                    thtml += `<td class="${colorSet[j.name]} lighten-3">${j.name}</td>`
+                    ti += j.time
+                }
+                for (let j = 0; j < mag - gg[i].length; j++) thtml += '<td></td>'
+                if (i !== document.getElementById("stuid").value && (!search || _.find(data.user, {id: i}).name.includes(search))) gginfo.push({
+                    name: _.find(data.user, {id: i}).name,
+                    html: thtml,
+                    time: ti
+                })
+            }
+            gginfo = _.orderBy(gginfo, ['time'], ['asc']).reverse();
+            for (let i of gginfo) {
+                document.getElementById('stable').innerHTML += `<tr>
                             <td>${i.name}</td>
                             <td>${i.time}시간</td>
                             ${i.html}
                         </tr>`
-                    }
-                    if (realClass === totalClass) document.getElementById('totalClass').innerText = totalClass + '학점'
-                    else document.getElementById('totalClass').innerText = totalClass + '시간 (' + realClass + '학점)'
+            }
+            if (realClass === totalClass) document.getElementById('totalClass').innerText = totalClass + '학점'
+            else document.getElementById('totalClass').innerText = totalClass + '시간 (' + realClass + '학점)'
+        }
+
+        function view() {
+            stuid = document.getElementById('stuid').value
+            if (data) {
+                draw()
+                return
+            }
+            fetch(stuid[0] + ".json")
+                .then(response => response.json())
+                .then(json => {
+                    data = json
+                    draw()
                 }).catch(() => {
                 M.toast({html: '오류가 발생했어요.'})
                 document.getElementById("stuid").value = ""
@@ -201,6 +210,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('stuid').addEventListener("keyup", (e) => {
                 if (e.currentTarget.value.length >= 5) view()
+            });
+            document.getElementById('gf').addEventListener("keyup", (e) => {
+                view()
             });
             document.getElementById('stuid').focus()
         })
@@ -286,6 +298,12 @@
         </table>
         <div id="gg">
             <h3>겹강</h3>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="gf" type="text" class="validate">
+                    <label for="gf">겹강 검색</label>
+                </div>
+            </div>
             <div style="max-height: 350px;overflow-y:scroll">
                 <table class="centered striped" style="margin-top: 20px;">
                     <thead>
