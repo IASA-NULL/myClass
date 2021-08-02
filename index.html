@@ -87,7 +87,7 @@
     </style>
     <script>
         let stuid, data
-        const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue']
+        const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
 
         function view() {
             stuid = document.getElementById('stuid').value
@@ -104,14 +104,34 @@
                     document.getElementById('chooser').style.display = 'none'
                     document.getElementById('viewer').style.display = 'flex'
                     document.getElementById('name').innerText = user.name
-                    let totalClass = 0, classList = [[], [], [], [], []], gg = {}, colorSet = {}
+                    let totalClass = 0, classList = [[], [], [], [], []], gg = {}, colorSet = {}, realClass = 0
                     for (let i = 0; i < 5; i++) {
-                        for (let j = 0; j < 9; j++) classList[i].push([""])
+                        for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : ""])
                     }
                     let cn = 0
+                    if (stuid[0] === '2') {
+                        classList[0][7] = '창체'
+                        classList[4][5] = '창체'
+                        classList[4][6] = '창체'
+                        classList[4][7] = '창체'
+                        classList[2][5] = 'SA'
+                        classList[2][6] = 'SA'
+                        classList[2][7] = 'SA'
+                        classList[2][8] = 'SA'
+                        if (document.getElementById('color').checked) colorSet['창체'] = colors[0]
+                        ++cn
+                    }
+                    if (stuid[0] === '3') {
+                        classList[2][5] = 'SA'
+                        classList[2][6] = 'SA'
+                    }
+                    if (document.getElementById('color').checked) colorSet['SA'] = colors[cn]
+                    ++cn
                     for (let i of user.data) {
                         let nowClass = _.filter(data.class, i).length
                         totalClass += nowClass
+                        realClass += nowClass
+                        if (i.className.includes('AP')) realClass -= 1
                         _.filter(data.class, i).forEach((cl) => {
                             if (document.getElementById('color').checked) {
                                 colorSet[cl.className] = colors[cn]
@@ -170,7 +190,8 @@
                             ${i.html}
                         </tr>`
                     }
-                    document.getElementById('totalClass').innerText = totalClass + '학점'
+                    if (realClass === totalClass) document.getElementById('totalClass').innerText = totalClass + '학점'
+                    else document.getElementById('totalClass').innerText = totalClass + '시간 (' + realClass + '학점)'
                 }).catch(() => {
                 M.toast({html: '오류가 발생했어요.'})
                 document.getElementById("stuid").value = ""
@@ -185,19 +206,21 @@
         })
 
         function pr() {
-            document.querySelector('.switch').style.display = 'none'
+            document.getElementById('sw').style.display = 'none'
             document.getElementById('gg').style.display = 'none'
             document.getElementById('back').style.display = 'none'
             document.getElementById('cont').style.boxShadow = 'none'
             document.getElementById('print').style.display = 'none'
             document.getElementById('copyright').style.display = 'none'
+            document.getElementById('viewer').style.overflowY = 'hidden'
             window.print()
-            document.querySelector('.switch').style.display = 'inline'
+            document.getElementById('sw').style.display = 'inline-block'
             document.getElementById('gg').style.display = ''
             document.getElementById('back').style.display = ''
             document.getElementById('cont').style.boxShadow = ''
             document.getElementById('print').style.display = ''
             document.getElementById('copyright').style.display = ''
+            document.getElementById('viewer').style.overflowY = ''
         }
     </script>
 </head>
@@ -225,13 +248,25 @@
         </a>
         <h2 id="name" class="bold" style="display: inline;margin:10px"></h2>
         <h4 id="totalClass" style="display: inline;margin-bottom: 20px;"></h4>
-        <div class="switch" style="display:inline;margin-left: 10px;">
-            <label>
-                흑백
-                <input type="checkbox" id="color" checked onclick="view()">
-                <span class="lever"></span>
-                색상
-            </label>
+        <div id="sw" style="display:inline-block;margin-left: 10px;position: relative;top:-25px;">
+            <div style="display: flex;flex-direction: column">
+                <div class="switch" style="margin:5px;">
+                    <label>
+                        흑백
+                        <input type="checkbox" id="color" checked onclick="view()">
+                        <span class="lever"></span>
+                        색상
+                    </label>
+                </div>
+                <div class="switch" style="margin:5px;">
+                    <label>
+                        공강 숨김
+                        <input type="checkbox" id="gongang" onclick="view()">
+                        <span class="lever"></span>
+                        공강 표시
+                    </label>
+                </div>
+            </div>
         </div>
         <a class="waves-effect waves-dark btn-flat" style="float: right;" onclick="pr()" id="print">시간표만 출력</a>
         <br/>
