@@ -10,12 +10,14 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>
 
         body, html {
             -webkit-print-color-adjust: exact !important;
             width: 100%;
             height: 100%;
+            overflow-x: none;
         }
 
         #chooser, #viewer {
@@ -29,7 +31,6 @@
             width: 900px;
             margin: auto;
             background: white;
-            box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
             border-radius: 50px;
             padding: 30px;
             height: fit-content;
@@ -83,6 +84,13 @@
 
         .switch label input[type=checkbox]:checked + .lever:after {
             background-color: #737373;
+        }
+
+        @media screen and (min-width: 600px)  {
+            .mobile-break { display: none; }
+            #chooser > div, #viewer > div {
+                box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+            }
         }
     </style>
     <script>
@@ -259,7 +267,12 @@
             <i class="material-icons" style="margin-top: 5px;color:black !important;">arrow_back</i>
         </a>
         <h2 id="name" class="bold" style="display: inline;margin:10px"></h2>
+        <br class="mobile-break">
         <h4 id="totalClass" style="display: inline;margin-bottom: 20px;"></h4>
+        <br class="mobile-break">
+        <br class="mobile-break">
+        <br class="mobile-break">
+        <br class="mobile-break">
         <div id="sw" style="display:inline-block;margin-left: 10px;position: relative;top:-25px;">
             <div style="display: flex;flex-direction: column">
                 <div class="switch" style="margin:5px;">
