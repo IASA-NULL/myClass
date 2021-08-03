@@ -86,22 +86,27 @@
             background-color: #737373;
         }
 
-        @media screen and (min-width: 600px)  {
-            .mobile-break { display: none; }
+        @media screen and (min-width: 600px) {
+            .mobile-break {
+                display: none;
+            }
+
             #chooser > div, #viewer > div {
                 box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
             }
         }
 
         @media print {
-            .mobile-break { display: none !important; }
+            .mobile-break {
+                display: none !important;
+            }
         }
     </style>
     <script>
         let stuid, data
         const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
 
-        function draw() {
+        function draw(push) {
             let search = document.getElementById('gf').value
             let user = _.find(data.user, {id: document.getElementById("stuid").value})
             if (!user) {
@@ -109,6 +114,7 @@
                 document.getElementById("stuid").value = ""
                 return
             }
+            if (!location.pathname.split('/').slice(-1)[0] || isNaN(location.pathname.split('/').slice(-1)[0])) history.pushState(null, user.name, stuid)
             document.getElementById('chooser').style.display = 'none'
             document.getElementById('viewer').style.display = 'flex'
             document.getElementById('name').innerText = user.name
@@ -212,7 +218,7 @@
                 .then(response => response.json())
                 .then(json => {
                     data = json
-                    draw()
+                    draw(true)
                 }).catch(() => {
                 M.toast({html: '오류가 발생했어요.'})
                 document.getElementById("stuid").value = ""
@@ -224,10 +230,26 @@
                 if (e.currentTarget.value.length >= 5) view()
             });
             document.getElementById('gf').addEventListener("keyup", (e) => {
-                view()
+                draw()
+            });
+            window.addEventListener('popstate', (event) => {
+                loadPage()
             });
             document.getElementById('stuid').focus()
         })
+
+        function loadPage() {
+            let currentPage = location.pathname.split('/').slice(-1)[0]
+            if (currentPage && !isNaN(currentPage)) {
+                document.getElementById('stuid').value = currentPage
+                view()
+            } else {
+                document.getElementById('stuid').value = ''
+                document.getElementById('chooser').style.display = 'flex'
+                document.getElementById('viewer').style.display = 'none'
+                document.getElementById('stuid').focus()
+            }
+        }
 
         function pr() {
             document.getElementById('sw').style.display = 'none'
@@ -256,7 +278,7 @@
         <br/>
         <div class="row">
             <div class="input-field col s12">
-                <input id="stuid" type="text" class="validate">
+                <input id="stuid" type="text">
                 <label for="stuid">학번</label>
             </div>
         </div>
@@ -266,12 +288,11 @@
 
 <div id="viewer">
     <div id="cont">
-        <a class="waves-effect waves-circle waves-dark" style="margin-top: -25px;" onclick="location.reload()"
+        <a class="waves-effect waves-circle waves-dark" style="margin-top: -25px;" onclick="history.back()"
            id="back">
             <i class="material-icons" style="margin-top: 5px;color:black !important;">arrow_back</i>
         </a>
         <h2 id="name" class="bold" style="display: inline;margin:10px"></h2>
-        <br class="mobile-break">
         <h4 id="totalClass" style="display: inline;margin-bottom: 20px;"></h4>
         <br class="mobile-break">
         <br class="mobile-break">
@@ -282,7 +303,7 @@
                 <div class="switch" style="margin:5px;">
                     <label>
                         흑백
-                        <input type="checkbox" id="color" checked onclick="view()">
+                        <input type="checkbox" id="color" checked onclick="draw()">
                         <span class="lever"></span>
                         색상
                     </label>
@@ -290,7 +311,7 @@
                 <div class="switch" style="margin:5px;">
                     <label>
                         공강 숨김
-                        <input type="checkbox" id="gongang" onclick="view()">
+                        <input type="checkbox" id="gongang" onclick="draw()">
                         <span class="lever"></span>
                         공강 표시
                     </label>
@@ -317,7 +338,7 @@
             <h3>겹강</h3>
             <div class="row">
                 <div class="input-field col s12">
-                    <input id="gf" type="text" class="validate">
+                    <input id="gf" type="text">
                     <label for="gf">겹강 검색</label>
                 </div>
             </div>
