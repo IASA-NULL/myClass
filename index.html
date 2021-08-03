@@ -17,7 +17,12 @@
             -webkit-print-color-adjust: exact !important;
             width: 100%;
             height: 100%;
-            overflow-x: none;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-image: url("back.png");
+            background-size: cover;
         }
 
         #chooser, #viewer {
@@ -30,10 +35,14 @@
         #chooser > div, #viewer > div {
             width: 900px;
             margin: auto;
-            background: white;
-            border-radius: 50px;
+            background: #ffffffbb;
             padding: 30px;
             height: fit-content;
+            backdrop-filter: blur(5px);
+        }
+
+        #chooser, #viewer {
+            animation: fadein 0.3s cubic-bezier(0, 0.7, 0, 0.7);
         }
 
         .input-field input[type=text]:focus + label {
@@ -92,7 +101,9 @@
             }
 
             #chooser > div, #viewer > div {
-                box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+                box-shadow: 20px 20px 60px #d9d9d9;
+                border-radius: 50px;
+                background: #ffffffee;
             }
         }
 
@@ -101,22 +112,40 @@
                 display: none !important;
             }
         }
+
+        @keyframes fadein {
+            0% {
+                margin-top: 30px;
+                height: calc(100% - 30px);
+                opacity: 0;
+            }
+            100% {
+                margin-top: 0;
+                opacity: 1;
+            }
+        }
+
+        .fout {
+            animation: fadeout 0.3s cubic-bezier(0.7, 0, 0.7, 0) !important;
+        }
+
+        @keyframes fadeout {
+            0% {
+                margin-top: 0;
+                opacity: 1;
+            }
+            100% {
+                margin-top: -10px;
+                opacity: 0;
+            }
+        }
     </style>
     <script>
-        let stuid, data
+        let stuid, data, user
         const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
 
-        function draw(push) {
+        function draw() {
             let search = document.getElementById('gf').value
-            let user = _.find(data.user, {id: document.getElementById("stuid").value})
-            if (!user) {
-                M.toast({html: '학번이 올바르지 않아요.'})
-                document.getElementById("stuid").value = ""
-                return
-            }
-            if (!location.pathname.split('/').slice(-1)[0] || isNaN(location.pathname.split('/').slice(-1)[0])) history.pushState(null, user.name, stuid)
-            document.getElementById('chooser').style.display = 'none'
-            document.getElementById('viewer').style.display = 'flex'
             document.getElementById('name').innerText = user.name
             let totalClass = 0, classList = [[], [], [], [], []], gg = {}, colorSet = {}, realClass = 0
             for (let i = 0; i < 5; i++) {
@@ -218,6 +247,19 @@
                 .then(response => response.json())
                 .then(json => {
                     data = json
+                    user = _.find(data.user, {id: document.getElementById("stuid").value})
+                    if (!user) {
+                        M.toast({html: '학번이 올바르지 않아요.'})
+                        document.getElementById("stuid").value = ""
+                        return
+                    }
+                    if (!location.hash.slice(1) || isNaN(location.hash.slice(1))) history.pushState(null, user.name, '#' + stuid)
+                    document.getElementById('chooser').classList.add('fout')
+                    document.getElementById('viewer').classList.remove('fout')
+                    setTimeout(() => {
+                        document.getElementById('chooser').style.display = 'none'
+                        document.getElementById('viewer').style.display = 'flex'
+                    }, 300)
                     draw(true)
                 }).catch(() => {
                 M.toast({html: '오류가 발생했어요.'})
@@ -236,18 +278,23 @@
                 loadPage()
             });
             document.getElementById('stuid').focus()
+            loadPage()
         })
 
         function loadPage() {
-            let currentPage = location.pathname.split('/').slice(-1)[0]
+            let currentPage = location.hash.slice(1)
             if (currentPage && !isNaN(currentPage)) {
                 document.getElementById('stuid').value = currentPage
                 view()
             } else {
                 document.getElementById('stuid').value = ''
-                document.getElementById('chooser').style.display = 'flex'
-                document.getElementById('viewer').style.display = 'none'
-                document.getElementById('stuid').focus()
+                document.getElementById('chooser').classList.remove('fout')
+                document.getElementById('viewer').classList.add('fout')
+                setTimeout(() => {
+                    document.getElementById('chooser').style.display = 'flex'
+                    document.getElementById('viewer').style.display = 'none'
+                    document.getElementById('stuid').focus()
+                }, 300)
             }
         }
 
@@ -335,7 +382,7 @@
             </tbody>
         </table>
         <div id="gg">
-            <h3>겹강</h3>
+            <h3 class="bold">겹강</h3>
             <div class="row">
                 <div class="input-field col s12">
                     <input id="gf" type="text">
