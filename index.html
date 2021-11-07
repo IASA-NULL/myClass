@@ -302,7 +302,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             fetch('zoom.json').then(res => res.json()).then(json => zoomInfo = json)
-            modal = M.Modal.init(document.getElementById('zoomInfo'))
+            modal = M.Modal.init(document.getElementById('zoomInfo'), {dismissible: false})
             document.getElementById('stuid').addEventListener("keyup", (e) => {
                 if (e.currentTarget.value.length >= 5) view()
             });
@@ -454,7 +454,7 @@
         <div id="modalContent"></div>
     </div>
     <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect btn-flat">닫기</a>
+        <a class="modal-close waves-effect btn-flat">닫기</a>
     </div>
 </div>
 </body>
