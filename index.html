@@ -144,13 +144,46 @@
         }
     </style>
     <script>
-        let stuid, data, user, zoomInfo
+        let stuid, data, user, zoomInfo, classList = [[], [], [], [], []]
         const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
+
+        async function notify(className) {
+            if (!modalHandler(className)) return
+            if (Notification.permission !== "granted") await Notification.requestPermission();
+            else {
+                const notification = new Notification('알림', {
+                    icon: 'notify.png',
+                    body: `곧 ${className} 수업시간이에요!`,
+                });
+
+                notification.onclick = function () {
+                    window.focus()
+                };
+            }
+        }
+
+        function notifyTime() {
+            let target, idx = 0;
+            const date = new Date().getDay() - 1
+            if (date < 0 || date > 4) return
+            const classHour = [8, 9, 10, 11, 13, 14, 15, 16, 17]
+            const classMinute = [35, 30, 25, 20, 15, 15, 10, 5, 15, 10]
+            for (idx = 0; idx < 8; idx++) {
+                if (classHour[idx] <= new Date().getHours() && classMinute[idx] <= new Date().getMinutes() && classMinute[idx] + 10 >= new Date().getMinutes()) {
+                    target = classList[date][idx]
+                    break
+                }
+            }
+            if (target) {
+                if (window.localStorage.target !== target) notify(target)
+                window.localStorage.target = target
+            }
+        }
 
         function draw() {
             let search = document.getElementById('gf').value
             document.getElementById('name').innerText = user.name
-            let totalClass = 0, classList = [[], [], [], [], []], gg = {}, colorSet = {}, realClass = 0
+            let totalClass = 0, gg = {}, colorSet = {}, realClass = 0
             for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : ""])
             }
@@ -251,7 +284,7 @@
         }
 
         function modalHandler(subject) {
-            if (['공강', 'SA', '창체', ''].includes(subject)) return
+            if (['공강', 'SA', '창체', ''].includes(subject)) return false
             document.getElementById('modalId').innerText = subject
             document.getElementById('modalContent').innerHTML = ''
             for (let i of zoomInfo.data) {
@@ -272,6 +305,7 @@
                 }
             }
             modal.open()
+            return true
         }
 
         function view() {
@@ -301,8 +335,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            Notification.requestPermission();
+            setInterval(notifyTime, 1000)
+
             fetch('zoom.json').then(res => res.json()).then(json => zoomInfo = json)
-            modal = M.Modal.init(document.getElementById('zoomInfo'), {dismissible: false})
+            modal = M.Modal.init(document.getElementById('zoomInfo'))
             document.getElementById('stuid').addEventListener("keyup", (e) => {
                 if (e.currentTarget.value.length >= 5) view()
             });
@@ -353,10 +390,6 @@
 
         const requestNotificationPermission = async () => {
             const permission = await window.Notification.requestPermission()
-            // value of permission can be 'granted', 'default', 'denied'
-            // granted: user has accepted the request
-            // default: user has dismissed the notification permission popup by clicking on x
-            // denied: user has denied the request.
             if (permission !== 'granted') {
                 throw new Error('Permission not granted for Notification')
             }
@@ -446,6 +479,15 @@
             </div>
         </div>
         <p id="copyright">2021 <a href="https://github.com/Seo-Rii">Studio SEORII</a>. All right reserved.</p>
+    </div>
+</div>
+<div id="soonClass" class="modal">
+    <div class="modal-content">
+        <h4 id="soonTitle"></h4>
+        <div id="soonContent"></div>
+    </div>
+    <div class="modal-footer">
+        <a class="modal-close waves-effect btn-flat">닫기</a>
     </div>
 </div>
 <div id="zoomInfo" class="modal">
