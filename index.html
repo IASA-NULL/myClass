@@ -78,6 +78,10 @@
             font-weight: 300
         }
 
+        .openModal {
+            cursor: pointer;
+        }
+
         td {
             width: 650px !important;
         }
@@ -140,7 +144,7 @@
         }
     </style>
     <script>
-        let stuid, data, user
+        let stuid, data, user, zoomInfo
         const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
 
         function draw() {
@@ -195,11 +199,11 @@
             for (let i = 1; i <= 9; i++) {
                 document.getElementById('table').innerHTML += `<tr>
                 <td>${i}교시</td>
-                <td class="${colorSet[classList[0][i - 1]]} lighten-3">${classList[0][i - 1]}</td>
-                <td class="${colorSet[classList[1][i - 1]]} lighten-3">${classList[1][i - 1]}</td>
-                <td class="${colorSet[classList[2][i - 1]]} lighten-3">${classList[2][i - 1]}</td>
-                <td class="${colorSet[classList[3][i - 1]]} lighten-3">${classList[3][i - 1]}</td>
-                <td class="${colorSet[classList[4][i - 1]]} lighten-3">${classList[4][i - 1]}</td>
+                <td onclick="modalHandler('${classList[0][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[0][i - 1]) ? '' : 'openModal'} ${colorSet[classList[0][i - 1]]} lighten-3">${classList[0][i - 1]}</td>
+                <td onclick="modalHandler('${classList[1][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[1][i - 1]) ? '' : 'openModal'} ${colorSet[classList[1][i - 1]]} lighten-3">${classList[1][i - 1]}</td>
+                <td onclick="modalHandler('${classList[2][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[2][i - 1]) ? '' : 'openModal'} ${colorSet[classList[2][i - 1]]} lighten-3">${classList[2][i - 1]}</td>
+                <td onclick="modalHandler('${classList[3][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[3][i - 1]) ? '' : 'openModal'} ${colorSet[classList[3][i - 1]]} lighten-3">${classList[3][i - 1]}</td>
+                <td onclick="modalHandler('${classList[4][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[4][i - 1]) ? '' : 'openModal'} ${colorSet[classList[4][i - 1]]} lighten-3">${classList[4][i - 1]}</td>
             </tr>`
             }
             let mag = 0
@@ -240,6 +244,35 @@
             else document.getElementById('totalClass').innerText = totalClass + '시간 (' + realClass + '학점)'
         }
 
+        function copyPwd(password) {
+            navigator.clipboard.writeText(password)
+            M.toast({html: '비밀번호를 복사했습니다.', displayLength: 2000})
+        }
+
+        function modalHandler(subject) {
+            if (['공강', 'SA', '창체', ''].includes(subject)) return
+            document.getElementById('modalId').innerText = subject
+            document.getElementById('modalContent').innerHTML = ''
+            for (let i of zoomInfo.data) {
+                if (i.name === subject) {
+                    document.getElementById('modalContent').innerHTML += `<div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content">
+                                <span class="card-title">${i.teacher} 선생님</span>
+                                <p>아이디 : ${i.id}</p>
+                                <p>비밀번호 : ${i.pwd}</p>
+                            </div>
+                            <div class="card-action">
+                                <a href="zoommtg://zoom.us/join?confno=${i.id}" onclick="copyPwd('${i.pwd}')">접속하기</a>
+                            </div>
+                        </div>
+                    </div>`
+                }
+            }
+            modal.open()
+        }
+
         function view() {
             stuid = document.getElementById('stuid').value
             fetch(stuid[0] + ".json")
@@ -267,6 +300,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            fetch('zoom.json').then(res => res.json()).then(json => zoomInfo = json)
+            modal = M.Modal.init(document.getElementById('zoomInfo'))
             document.getElementById('stuid').addEventListener("keyup", (e) => {
                 if (e.currentTarget.value.length >= 5) view()
             });
@@ -313,6 +348,17 @@
             document.getElementById('print').style.display = ''
             document.getElementById('copyright').style.display = ''
             document.getElementById('viewer').style.overflowY = ''
+        }
+
+        const requestNotificationPermission = async () => {
+            const permission = await window.Notification.requestPermission()
+            // value of permission can be 'granted', 'default', 'denied'
+            // granted: user has accepted the request
+            // default: user has dismissed the notification permission popup by clicking on x
+            // denied: user has denied the request.
+            if (permission !== 'granted') {
+                throw new Error('Permission not granted for Notification')
+            }
         }
     </script>
 </head>
@@ -399,6 +445,15 @@
             </div>
         </div>
         <p id="copyright">2021 <a href="https://github.com/Seo-Rii">Studio SEORII</a>. All right reserved.</p>
+    </div>
+</div>
+<div id="zoomInfo" class="modal">
+    <div class="modal-content">
+        <h4 id="modalId"></h4>
+        <div id="modalContent"></div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect btn-flat">닫기</a>
     </div>
 </div>
 </body>
