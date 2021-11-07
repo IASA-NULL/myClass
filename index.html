@@ -247,6 +247,7 @@
         function copyPwd(password) {
             navigator.clipboard.writeText(password)
             M.toast({html: '비밀번호를 복사했습니다.', displayLength: 2000})
+            modal.close()
         }
 
         function modalHandler(subject) {
