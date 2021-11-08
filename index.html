@@ -149,17 +149,34 @@
         const colors = ['red', 'pink', 'purple', 'indigo', 'cyan', 'light-green', 'lime', 'amber', 'brown', 'grey', 'light-blue', 'deep-orange', 'green', 'deep-purple', 'yellow', 'blue']
 
         async function notify(className) {
-            if (!modalHandler(className)) return
+            if (!modalHandler(className, true)) return
             if (Notification.permission !== "granted") await Notification.requestPermission();
             else {
-                const notification = new Notification('알림', {
-                    icon: 'notify.png',
-                    body: `곧 ${className} 수업시간이에요!`,
+                const zoomList = []
+                for (let i of zoomInfo.data) {
+                    if (i.name === className) zoomList.push({
+                        id: i.id,
+                        pwd: i.pwd,
+                        teacher: i.teacher,
+                    })
+                }
+                navigator.serviceWorker.ready.then(function (registration) {
+                    registration.showNotification('알림', {
+                        icon: 'notify.png',
+                        body: `곧 ${className} 수업시간이에요!`,
+                        actions: zoomList.map(i => {
+                            return {
+                                action: `zoom.${i.id}.${i.pwd}.${i.teacher}`,
+                                title: `${i.teacher}쌤 줌`
+                            }
+                        })
+                    });
+                    self.onclick = function (e) {
+                        e.preventDefault()
+                        window.focus()
+                    };
                 });
 
-                notification.onclick = function () {
-                    window.focus()
-                };
             }
         }
 
@@ -175,7 +192,6 @@
                     break
                 }
             }
-            console.log(target)
             if (target && !['공강', 'SA', '창체', ' '].includes(target)) {
                 if (window.localStorage.target != target) notify(target)
                 window.localStorage.target = target
@@ -286,9 +302,9 @@
             modal.close()
         }
 
-        function modalHandler(subject) {
+        function modalHandler(subject, soon = false) {
             if (['공강', 'SA', '창체', ' '].includes(subject)) return false
-            document.getElementById('modalId').innerText = subject
+            document.getElementById('modalId').innerText = soon ? `곧 ${subject} 수업이에요!` : subject
             document.getElementById('modalContent').innerHTML = ''
             for (let i of zoomInfo.data) {
                 if (i.name === subject) {
@@ -340,7 +356,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             Notification.requestPermission();
             setInterval(notifyTime, 1000)
-
+            navigator.serviceWorker.register('service.js').then(function (registration) {
+                console.log('Service worker successfully registered.');
+                return registration;
+            }).catch(function (err) {
+                console.error('Unable to register service worker.', err);
+            });
             fetch('zoom.json').then(res => res.json()).then(json => zoomInfo = json)
             modal = M.Modal.init(document.getElementById('zoomInfo'))
             document.getElementById('stuid').addEventListener("keyup", (e) => {
