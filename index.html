@@ -168,7 +168,7 @@
             const date = new Date().getDay() - 1
             if (date < 0 || date > 4) return
             const classHour = [8, 9, 10, 11, 13, 14, 15, 16, 17]
-            const classMinute = [35, 30, 25, 20, 15, 15, 10, 5, 15, 10]
+            const classMinute = [35, 30, 25, 20, 15, 10, 5, 15, 10]
             for (idx = 8; idx >= 0; idx--) {
                 if (classHour[idx] == new Date().getHours() && classMinute[idx] <= new Date().getMinutes() && classMinute[idx] + 10 >= new Date().getMinutes()) {
                     target = classList[date][idx]
