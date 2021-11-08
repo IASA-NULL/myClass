@@ -9,6 +9,7 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('notificationclick', function (event) {
     if (event.action.split('.')[0] !== 'zoom') return
     const id = event.action.split('.')[1], pwd = event.action.split('.')[2], teacher = event.action.split('.')[3]
+    if (!id || !pwd) return
     self.registration.showNotification(`${teacher} 선생님 줌에 접속했어요.`, {
         body: `암호는 ${pwd}에요.`
     })
