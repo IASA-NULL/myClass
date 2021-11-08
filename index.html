@@ -168,13 +168,14 @@
             if (date < 0 || date > 4) return
             const classHour = [8, 9, 10, 11, 13, 14, 15, 16, 17]
             const classMinute = [35, 30, 25, 20, 15, 15, 10, 5, 15, 10]
-            for (idx = 0; idx < 8; idx++) {
-                if (classHour[idx] <= new Date().getHours() && classMinute[idx] <= new Date().getMinutes() && classMinute[idx] + 10 >= new Date().getMinutes()) {
+            for (idx = 8; idx >= 0; idx--) {
+                if (classHour[idx] == new Date().getHours() && classMinute[idx] <= new Date().getMinutes() && classMinute[idx] + 10 >= new Date().getMinutes()) {
                     target = classList[date][idx]
                     break
                 }
             }
-            if (!['공강', 'SA', '창체', ' '].includes(target)) {
+            console.log(target)
+            if (target && !['공강', 'SA', '창체', ' '].includes(target)) {
                 if (window.localStorage.target != target) notify(target)
                 window.localStorage.target = target
             }
@@ -185,7 +186,7 @@
             document.getElementById('name').innerText = user.name
             let totalClass = 0, gg = {}, colorSet = {}, realClass = 0
             for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : " "])
+                for (let j = 0; j < 9; j++) classList[i].push(document.getElementById('gongang').checked ? "공강" : " ")
             }
             let cn = 0
             if (stuid[0] === '2') {
