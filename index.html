@@ -174,8 +174,8 @@
                     break
                 }
             }
-            if (target) {
-                if (window.localStorage.target !== target) notify(target)
+            if (!['공강', 'SA', '창체', ' '].includes(target)) {
+                if (window.localStorage.target != target) notify(target)
                 window.localStorage.target = target
             }
         }
@@ -185,7 +185,7 @@
             document.getElementById('name').innerText = user.name
             let totalClass = 0, gg = {}, colorSet = {}, realClass = 0
             for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : ""])
+                for (let j = 0; j < 9; j++) classList[i].push([document.getElementById('gongang').checked ? "공강" : " "])
             }
             let cn = 0
             if (stuid[0] === '2') {
@@ -232,11 +232,11 @@
             for (let i = 1; i <= 9; i++) {
                 document.getElementById('table').innerHTML += `<tr>
                 <td>${i}교시</td>
-                <td onclick="modalHandler('${classList[0][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[0][i - 1]) ? '' : 'openModal'} ${colorSet[classList[0][i - 1]]} lighten-3">${classList[0][i - 1]}</td>
-                <td onclick="modalHandler('${classList[1][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[1][i - 1]) ? '' : 'openModal'} ${colorSet[classList[1][i - 1]]} lighten-3">${classList[1][i - 1]}</td>
-                <td onclick="modalHandler('${classList[2][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[2][i - 1]) ? '' : 'openModal'} ${colorSet[classList[2][i - 1]]} lighten-3">${classList[2][i - 1]}</td>
-                <td onclick="modalHandler('${classList[3][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[3][i - 1]) ? '' : 'openModal'} ${colorSet[classList[3][i - 1]]} lighten-3">${classList[3][i - 1]}</td>
-                <td onclick="modalHandler('${classList[4][i - 1]}');" class="${['공강', 'SA', '창체', ''].includes(classList[4][i - 1]) ? '' : 'openModal'} ${colorSet[classList[4][i - 1]]} lighten-3">${classList[4][i - 1]}</td>
+                <td onclick="modalHandler('${classList[0][i - 1]}');" class="${['공강', 'SA', '창체', ' '].includes(classList[0][i - 1]) ? '' : 'openModal'} ${colorSet[classList[0][i - 1]]} lighten-3">${classList[0][i - 1]}</td>
+                <td onclick="modalHandler('${classList[1][i - 1]}');" class="${['공강', 'SA', '창체', ' '].includes(classList[1][i - 1]) ? '' : 'openModal'} ${colorSet[classList[1][i - 1]]} lighten-3">${classList[1][i - 1]}</td>
+                <td onclick="modalHandler('${classList[2][i - 1]}');" class="${['공강', 'SA', '창체', ' '].includes(classList[2][i - 1]) ? '' : 'openModal'} ${colorSet[classList[2][i - 1]]} lighten-3">${classList[2][i - 1]}</td>
+                <td onclick="modalHandler('${classList[3][i - 1]}');" class="${['공강', 'SA', '창체', ' '].includes(classList[3][i - 1]) ? '' : 'openModal'} ${colorSet[classList[3][i - 1]]} lighten-3">${classList[3][i - 1]}</td>
+                <td onclick="modalHandler('${classList[4][i - 1]}');" class="${['공강', 'SA', '창체', ' '].includes(classList[4][i - 1]) ? '' : 'openModal'} ${colorSet[classList[4][i - 1]]} lighten-3">${classList[4][i - 1]}</td>
             </tr>`
             }
             let mag = 0
@@ -284,7 +284,7 @@
         }
 
         function modalHandler(subject) {
-            if (['공강', 'SA', '창체', ''].includes(subject)) return false
+            if (['공강', 'SA', '창체', ' '].includes(subject)) return false
             document.getElementById('modalId').innerText = subject
             document.getElementById('modalContent').innerHTML = ''
             for (let i of zoomInfo.data) {
