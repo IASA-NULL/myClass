@@ -185,6 +185,7 @@
             let search = document.getElementById('gf').value
             document.getElementById('name').innerText = user.name
             let totalClass = 0, gg = {}, colorSet = {}, realClass = 0
+            classList = [[], [], [], [], []]
             for (let i = 0; i < 5; i++) {
                 for (let j = 0; j < 9; j++) classList[i].push(document.getElementById('gongang').checked ? "공강" : " ")
             }
