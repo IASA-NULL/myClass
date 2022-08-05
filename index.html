@@ -226,6 +226,7 @@
             }
             if (document.getElementById('color').checked) colorSet['SA'] = colors[cn]
             ++cn
+            //console.log(user.data)
             for (let i of user.data) {
                 let nowClass = _.filter(data.class, i).length
                 totalClass += nowClass
@@ -236,11 +237,12 @@
                         colorSet[cl.className] = colors[cn]
                     }
                     classList[parseInt(cl.day)][parseInt(cl.time)] = cl.className
+                    //console.log(classList, cl)
                 })
 
                 for (let u of data.user) {
                     if (_.find(u.data, i)) {
-                        if (!gg[u.id]) gg[u.id] = []
+                        if (!gg[u.id]) {gg[u.id] = []}
                         gg[u.id].push({name: i.className, time: nowClass})
                     }
                 }
