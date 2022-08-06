@@ -282,6 +282,7 @@
                 for (let j = 0; j < mag - gg[i].length; j++) thtml += '<td></td>'
                 if (i !== document.getElementById("stuid").value && (!search || _.find(data.user, {id: i}).name.includes(search))) gginfo.push({
                     name: _.find(data.user, {id: i}).name,
+                    id: _.find(data.user, {id: i}).id,
                     html: thtml,
                     time: ti
                 })
@@ -289,7 +290,7 @@
             gginfo = _.orderBy(gginfo, ['time'], ['asc']).reverse();
             for (let i of gginfo) {
                 document.getElementById('stable').innerHTML += `<tr>
-                            <td>${i.name}</td>
+                            <td><A href = "https://iasa-null.github.io/myClass/#${i.id}" target = "blank">${i.name}</A></td>
                             <td>${i.time}시간</td>
                             ${i.html}
                         </tr>`
