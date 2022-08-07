@@ -83,8 +83,32 @@
             cursor: pointer;
         }
 
+        #table > tr > td {
+            height: 65px !important;
+            padding: 13px 17px;
+        }
+
+        #stable > tr {
+            max-height: 65px;
+        }
+
+        #stable > tr > td:nth-child(1),
+        #stable > tr > td:nth-child(2) {
+            min-width: 50px;
+        }
+
         td {
             width: 650px !important;
+            overflow: hidden;
+        }
+
+        .nameLink {
+            color: black;
+            transition: 0.1s ease-in all;
+        }
+
+        .nameLink:hover {
+            color: #039be5;
         }
 
         .switch label .lever {
@@ -290,7 +314,7 @@
             gginfo = _.orderBy(gginfo, ['time'], ['asc']).reverse();
             for (let i of gginfo) {
                 document.getElementById('stable').innerHTML += `<tr>
-                            <td><A href = "https://iasa-null.github.io/myClass/#${i.id}" target = "blank">${i.name}</A></td>
+                            <td><A href = "https://iasa-null.github.io/myClass/#${i.id}" target = "blank" class="nameLink">${i.name}</A></td>
                             <td>${i.time}시간</td>
                             ${i.html}
                         </tr>`
@@ -426,7 +450,7 @@
 <body>
 <div id="chooser" style="display:inline-flex;">
     <div>
-        <h1 class="bold">인과영 시간표 뷰어</h1>
+        <h1 class="bold"><div>인과영</div><div>시간표 뷰어</div></h1>
         <h4 class="light">학번을 입력하세요.</h4>
         <br/>
         <div class="row">
@@ -480,11 +504,11 @@
             <thead>
             <tr>
                 <th></th>
-                <th>월요일</th>
-                <th>화요일</th>
-                <th>수요일</th>
-                <th>목요일</th>
-                <th>금요일</th>
+                <th>월</th>
+                <th>화</th>
+                <th>수</th>
+                <th>목</th>
+                <th>금</th>
             </tr>
             </thead>
             <tbody id="table">
