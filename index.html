@@ -233,6 +233,8 @@
             let cn = 0
             if (stuid[0] === '2') {
                 classList[0][7] = '창체'
+                classList[0][8] = '전원 공강'
+                classList[4][8] = '전원 공강'
                 classList[4][6] = '동아리'
                 classList[4][7] = '동아리'
                 classList[2][5] = 'SA'
@@ -240,6 +242,7 @@
                 classList[2][7] = 'SA'
                 classList[2][8] = 'SA'
                 if (document.getElementById('color').checked) colorSet['창체'] = colors[0]
+                if (document.getElementById('color').checked) colorSet['전원 공강'] = colors[0]
                 ++cn
                 if (document.getElementById('color').checked) colorSet['동아리'] = colors[1]
             }
